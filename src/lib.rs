@@ -39,7 +39,7 @@ macro_rules! concat_arrays {
         }
 
         impl<T, A, B, const N: usize> ArrayConcatComposed<T, A, B, N> {
-            const PANIC: bool = $crate::_const_assert_same_size::<[T; N], Self>();
+            const PANIC: bool = $crate::_const_assert_same_size::<[T; N], ArrayConcatDecomposed::<T, A, B>>();
 
             #[inline(always)]
             const fn have_same_size(&self) -> bool {
