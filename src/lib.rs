@@ -9,6 +9,21 @@ macro_rules! concat_arrays_size {
 }
 
 /// Concatenates provided arrays.
+///
+/// The macro verifies that the combined length of the input arrays matches the length of the result array.
+/// The examples below will fail to compile as the input arrays are either too short or too long.
+/// ```compile_fail
+/// # #[macro_use] extern crate array_concat;
+/// # fn main() {
+/// let c: [u32; 6] = concat_arrays!([1, 2, 3], [4, 5]); // too short
+/// # }
+/// ```
+/// ```compile_fail
+/// # #[macro_use] extern crate array_concat;
+/// # fn main() {
+/// let c: [u32; 6] = concat_arrays!([1, 2, 3], [4, 5, 6, 7]); // too long
+/// # }
+/// ```
 #[macro_export]
 macro_rules! concat_arrays {
     ($( $array:expr ),*) => ({
@@ -39,7 +54,7 @@ macro_rules! concat_arrays {
         }
 
         impl<T, A, B, const N: usize> ArrayConcatComposed<T, A, B, N> {
-            const PANIC: bool = $crate::_const_assert_same_size::<[T; N], Self>();
+            const PANIC: bool = $crate::_const_assert_same_size::<[T; N], ArrayConcatDecomposed::<T, A, B>>();
 
             #[inline(always)]
             const fn have_same_size(&self) -> bool {
